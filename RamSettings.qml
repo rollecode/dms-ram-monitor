@@ -44,4 +44,14 @@ PluginSettings {
         placeholder: "RAM"
         defaultValue: "RAM"
     }
+
+    SliderSetting {
+        settingKey: "topCount"
+        label: "Entries to show"
+        description: "How many rows the popout lists, biggest first"
+        defaultValue: 30
+        minimum: 5
+        maximum: 60
+        unit: ""
+    }
 }
