@@ -66,7 +66,7 @@ detail_for() {
     case "$name" in
       "Page cache")   d="reclaimable file cache" ;;
       "Disk buffers") d="reclaimable block cache" ;;
-      "Available")    d="usable right now" ;;
+      "Available")    d="free to use" ;;
       "Kernel slab")  d="kernel internal structures" ;;
       "Kernel")       d="memory maps, overhead" ;;
       *)              d="" ;;

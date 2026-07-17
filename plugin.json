@@ -2,7 +2,7 @@
   "id": "ramMonitor",
   "name": "RAM Monitor",
   "description": "RAM usage as an animated progress bar in the DankBar, updated every second",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "author": "Rolle Laukkarinen",
   "icon": "memory_alt",
   "type": "widget",

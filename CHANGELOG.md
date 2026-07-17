@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.3.1: 2026-07-17
+
+* Reword the Available row's hint to "free to use": "usable right now" was one glance from reading as usage
+
 ### 1.3.0: 2026-07-17
 
 * Show Available pinned on top instead of MemFree: what programs can actually use, not the deliberately tiny free count
