@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.4.0: 2026-07-17
+
+* Support zswap: its RAM cost gets its own popout row from `/proc/meminfo` and is excluded from the pill percentage, same treatment zram already had
+
 ### 1.3.1: 2026-07-17
 
 * Reword the Available row's hint to "free to use": "usable right now" was one glance from reading as usage

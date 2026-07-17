@@ -45,13 +45,14 @@ detail_for() {
   awk '
   /^MemTotal:/{t=$2} /^MemFree:/{f=$2} /^MemAvailable:/{av=$2} /^Buffers:/{b=$2} /^Cached:/{c=$2}
   /^Shmem:/{sh=$2} /^Slab:/{sl=$2} /^PageTables:/{pt=$2}
-  /^KernelStack:/{ks=$2} /^VmallocUsed:/{vm=$2}
+  /^KernelStack:/{ks=$2} /^VmallocUsed:/{vm=$2} /^Zswap:/{zw=$2}
   END{
     printf "S\t%d\t-\tPage cache\n", c-sh
     printf "S\t%d\t-\tKernel slab\n", sl
     printf "S\t%d\t-\ttmpfs / shm\n", sh
     printf "S\t%d\t-\tDisk buffers\n", b
     printf "S\t%d\t-\tKernel\n", pt+ks+vm
+    if (zw > 0) printf "S\t%d\t-\tzswap (compressed swap)\n", zw
     printf "F\t%d\t-\tAvailable\n", av
   }' /proc/meminfo 2>/dev/null
 

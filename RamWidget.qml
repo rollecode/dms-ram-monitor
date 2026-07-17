@@ -55,8 +55,9 @@ PluginComponent {
                 // usage only, so its share is excluded (still a popout row).
                 const zm = text.match(/^ZRAM (\d+)$/m)
                 const zramKb = zm ? parseFloat(zm[1]) / 1024 : 0
+                const zswapKb = grab("Zswap")
                 root.memTotal = total
-                root.memUsed = Math.max(0, total - avail - zramKb)
+                root.memUsed = Math.max(0, total - avail - zramKb - zswapKb)
                 root.memPercent = (root.memUsed / total) * 100
             }
         }
