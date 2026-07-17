@@ -43,7 +43,7 @@ detail_for() {
   }' /proc/[0-9]*/statm 2>/dev/null
 
   awk '
-  /^MemTotal:/{t=$2} /^MemFree:/{f=$2} /^Buffers:/{b=$2} /^Cached:/{c=$2}
+  /^MemTotal:/{t=$2} /^MemFree:/{f=$2} /^MemAvailable:/{av=$2} /^Buffers:/{b=$2} /^Cached:/{c=$2}
   /^Shmem:/{sh=$2} /^Slab:/{sl=$2} /^PageTables:/{pt=$2}
   /^KernelStack:/{ks=$2} /^VmallocUsed:/{vm=$2}
   END{
@@ -51,8 +51,8 @@ detail_for() {
     printf "S\t%d\t-\tKernel slab\n", sl
     printf "S\t%d\t-\ttmpfs / shm\n", sh
     printf "S\t%d\t-\tDisk buffers\n", b
-    printf "S\t%d\t-\tKernel tables and stacks\n", pt+ks+vm
-    printf "F\t%d\t-\tFree\n", f
+    printf "S\t%d\t-\tKernel\n", pt+ks+vm
+    printf "F\t%d\t-\tAvailable\n", av
   }' /proc/meminfo 2>/dev/null
 
   for z in /sys/block/zram*/mm_stat; do
@@ -63,7 +63,15 @@ detail_for() {
   if [ "$type" = "P" ]; then
     printf '%s\t%s\t%s\t%s\t%s\n' "$type" "$kb" "$pid" "$name" "$(detail_for "$pid" "$name")"
   else
-    printf '%s\t%s\t%s\t%s\t\n' "$type" "$kb" "$pid" "$name"
+    case "$name" in
+      "Page cache")   d="reclaimable file cache" ;;
+      "Disk buffers") d="reclaimable block cache" ;;
+      "Available")    d="usable right now" ;;
+      "Kernel slab")  d="kernel internal structures" ;;
+      "Kernel")       d="memory maps, overhead" ;;
+      *)              d="" ;;
+    esac
+    printf '%s\t%s\t%s\t%s\t%s\n' "$type" "$kb" "$pid" "$name" "$d"
   fi
 done
 

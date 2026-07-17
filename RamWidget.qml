@@ -39,7 +39,7 @@ PluginComponent {
 
     Process {
         id: memProcess
-        command: ["cat", "/proc/meminfo"]
+        command: ["sh", "-c", "cat /proc/meminfo; echo ZRAM $(awk '{s+=$3} END{print s+0}' /sys/block/zram*/mm_stat 2>/dev/null)"]
         running: false
 
         stdout: StdioCollector {
@@ -51,8 +51,12 @@ PluginComponent {
                 const total = grab("MemTotal")
                 const avail = grab("MemAvailable")
                 if (total <= 0) return
+                // zram holds swapped-out pages in RAM; the pill reads as RAM
+                // usage only, so its share is excluded (still a popout row).
+                const zm = text.match(/^ZRAM (\d+)$/m)
+                const zramKb = zm ? parseFloat(zm[1]) / 1024 : 0
                 root.memTotal = total
-                root.memUsed = total - avail
+                root.memUsed = Math.max(0, total - avail - zramKb)
                 root.memPercent = (root.memUsed / total) * 100
             }
         }
@@ -145,6 +149,11 @@ PluginComponent {
             }
 
             StyledText {
+                // Fixed width: digits changing every second must not resize
+                // the pill, or the bar relayouts constantly and hit-testing
+                // chases stale geometry.
+                width: 34
+                horizontalAlignment: Text.AlignRight
                 text: `${root.memPercent.toFixed(0)}%`
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.surfaceText
@@ -205,6 +214,8 @@ PluginComponent {
                                     font.pixelSize: Theme.fontSizeSmall - 1
                                     color: Theme.surfaceVariantText
                                     opacity: 0.55
+                                    wrapMode: Text.NoWrap
+                                    maximumLineCount: 1
                                     elide: Text.ElideRight
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
@@ -236,7 +247,7 @@ PluginComponent {
                                         width: parent.width * Math.min(modelData.share || 0, 1)
                                         height: parent.height
                                         radius: parent.radius
-                                        color: modelData.free ? Theme.primary : (modelData.killable ? root.usageColor((modelData.share || 0) * 100) : Theme.surfaceVariantText)
+                                        color: modelData.free ? Theme.primary : root.usageColor((modelData.share || 0) * 100)
                                     }
                                 }
                             }

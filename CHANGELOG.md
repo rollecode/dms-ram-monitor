@@ -1,5 +1,13 @@
 # Changelog
 
+### 1.3.0: 2026-07-17
+
+* Show Available pinned on top instead of MemFree: what programs can actually use, not the deliberately tiny free count
+* Explain system rows in place with three dim words: page cache, disk buffers, kernel slab, kernel overhead
+* Count only physical RAM in the pill percentage: zram's share is excluded, it keeps its own row
+* Colour every popout bar with the orange and red thresholds; Available keeps the accent
+* Keep the pill a constant width: digits changing every second no longer resize it and churn the bar layout
+
 ### 1.2.0: 2026-07-17
 
 * Add a popout listing what is actually using memory, biggest first, with a kill icon on each process
