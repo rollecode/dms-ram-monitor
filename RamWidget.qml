@@ -75,14 +75,17 @@ PluginComponent {
         }
     }
 
-    // Only polled while the popout is open; the pill needs none of it.
+    // Warm the list in the background: the collectors take up to a second, and
+    // starting them on click leaves the popout empty until they finish.
     Timer {
-        interval: 2000
-        running: root.popoutOpen
+        interval: root.popoutOpen ? 2000 : 20000
+        running: true
         repeat: true
         triggeredOnStart: true
         onTriggered: rowsProcess.running = true
     }
+
+    onPopoutOpenChanged: if (popoutOpen) rowsProcess.running = true
 
     Process {
         id: rowsProcess
